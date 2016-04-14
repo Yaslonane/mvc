@@ -6,18 +6,34 @@
  * Date: 01.04.16
  * Time: 22:55
  */
+
+include_once ROOT.'/models/News.php';
+
 class NewsController{
 
     public function actionIndex(){
 
-        echo 'Показывает список новостей';
-        
+        $newsList = array();
+        $newsList = News::getNewsList();
+
+        echo '<pre>';
+        print_r($newsList);
+        echo '</pre>';
+
         return true;
     }
 
-    public function actionView(){
+    public function actionView($id){
 
-        echo 'Показывает одну новость в развернутом виде';
+        if($id){
+            $newsItem = News::getNewsItemById($id);
+
+            echo '<pre>';
+            print_r($newsItem);
+            echo '</pre>';
+
+            echo 'actionView';
+        }
 
         return true;
     }

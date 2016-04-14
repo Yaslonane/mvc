@@ -14,6 +14,21 @@ class News{
      */
     public static function getNewsItemById($id){
         //запрос к БД
+        $id = intval($id);
+
+        if($id){
+
+            $db = Db::getConnection();
+
+            $result = $db->query('SELECT * FROM news WHERE id='.$id);
+
+            // $result->setFetchMode(PDO::FETCH_NUM); //обращение к элементам по номеру столбца
+            $result->setFetchMode(PDO::FETCH_ASSOC); //обращение к элементам по имени столбца
+
+            $newsItem = $result->fetch();
+
+            return $newsItem;
+        }
     }
 
     /*
@@ -21,13 +36,7 @@ class News{
      */
     public static function getNewsList(){
 
-        $host = 'localhost';
-        $dbname = 'mvc_site';
-        $user = 'root';
-        $password = 'root';
-        $db = new PDO("mysql:host=$host;dbname=$dbname", $user, $password);
-        $db->exec('SET NAMES utf8'); //задаём кодировку ввода/вывода БД
-
+        $db = Db::getConnection();
 
         $newsList = array();
 

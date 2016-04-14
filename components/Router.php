@@ -26,31 +26,27 @@ class Router{
 
     public function run(){
         //получить строку запроса
-        $url = $this->getURI();
+        $uri = $this->getURI();
 
         //проверить наличие запроса в routes.php
 
-        foreach($this->routes as $urlPattern => $path){
+        foreach($this->routes as $uriPattern => $path){
 
             //сравниваем $urlPattern и $url
-            if(preg_match("~$urlPattern~", $url)){
-
-                echo '<br>Где имеем: ' . $url;
-                echo '<br>Что имеем: ' . $urlPattern;
-                echo '<br>Кто обрабатывает: ' . $path . "<br>";
+            if(preg_match("~$uriPattern~", $uri)){
 
                 //получаем внутренний путь из внешнего согласно правилу
-                $internalRoute = preg_replace("~$urlPattern~", $path, $url);
+                $internalRoute = preg_replace("~$uriPattern~", $path, $uri);
 
-                echo '<br> Формируем запрос: ' . $internalRoute . '<br>';
-
-                //определить контлоллер и экшен
-                $segments = explode('/', $path);
+                //определить контлоллер, экшен и параметры
+                $segments = explode('/', $internalRoute);
 
                 $controllerName = array_shift($segments).'Controller';
                 $controllerName = ucfirst($controllerName);
 
                 $actionName = 'action'.ucfirst(array_shift($segments));
+
+                $parameters = $segments;
 
                 //подключить файл класса контроллера
 
@@ -61,7 +57,9 @@ class Router{
                 }
                 
                 $controllerObject = new $controllerName;
-                $result = $controllerObject->$actionName();
+
+                $result = call_user_func_array(array($controllerObject, $actionName),$parameters);
+
                 if($result != null){
                     break;
                 }
